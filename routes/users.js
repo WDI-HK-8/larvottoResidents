@@ -41,19 +41,18 @@ exports.register = function (server, options, next){
               });
             })
           },
-          validate: {
-            payload: {
-              user: {
-                firstname: Joi.string().min(1).max(40).required(),
-                lastname: Joi.string().min(1).max(40).required(),
+          validate:{
+            payload:{
+              user:{
+                firstname: Joi.string().min(1).max(100).required(),
+                lastname: Joi.string().min(1).max(100).required(),
                 email: Joi.string().email().max(100).required(),
-                username: Joi.string().min(1).max(40).required(),
-                password: Joi.string().min(1).max(40).required(),
-                // dateCreated: Joi.date().required()  
+                username: Joi.string().min(1).max(100).required(),
+                password: Joi.string().min(1).max(100).required(),
+                dateCreated: Joi.date().required()  
               }
             }
           }
-          
         }    
 
 
