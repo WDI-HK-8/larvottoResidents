@@ -33,6 +33,33 @@ $(document).ready(function(){
   };
 
 
+  APIaction.prototype.userLogin = function(){
+    $.ajax({
+      type: 'POST',
+      url: '/sessions',
+      data:{
+        user:{
+          username: memberName,
+          password: memberPassword
+        }
+      },
+      dataType: 'json',
+      success: function(response){
+        if(response.userExist === false){
+          alert("Record not found. Please sign up.")
+        } else if (response.authorized === false){
+          alert("Credentials not correct, please check again")
+        } else {
+          alert('Login successful!')
+
+          }
+      }
+
+    })
+  }
+
+
+
   var apiAction = new APIaction();
 
   //toggle control
@@ -42,7 +69,6 @@ $(document).ready(function(){
 
 
   //createUser
-
   $('#notAMember').on('click', function(){
     $('.nonMember_wrapping').slideToggle();
   });
@@ -68,6 +94,16 @@ $(document).ready(function(){
 
   });
 
+  //User login
+  $('.submit').on('click', function(){
+    memberName = $('.memberuserName').val();
+    memberPassword = $('.memberpassword').val();
+    apiAction.userLogin();
+
+    $('.memberuserName').val("");
+    $('.memberpassword').val("")
+
+  })
 
 
 
