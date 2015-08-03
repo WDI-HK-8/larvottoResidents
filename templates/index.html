@@ -2,8 +2,166 @@
 <html>
 <head>
   <title></title>
+  <link rel="stylesheet" type="text/css" href="public/customs.css">
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  
+  <script type="text/javascript" src="public/application.js"></script>
 </head>
+
 <body>
+<!--   //nav bar at the top
+ -->  
+ <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    
+      <div id="navbar" class="navbar-collapse collapse">
+        
+        <ul class="nav navbar-nav navbar-left" id:"left-items">
+          <a class="navbar-brand" href="#">
+            <img src="/public/assets/logoOne.png" data-id="logo"  width="auto" height="400%">
+          </a>
+          <li><a href="#">ABOUT</a></li>
+          <li><a href="#">BLOG</a></li>
+          <li><a href="#">ADVERTISERS</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle">MORE <b class="caret"></b></a>
+            
+            <ul class="dropdown-menu">
+              <li><a href="#">Community</a></li>
+              <li><a href="#">Our Blog</a></li>
+              <li><a href="#">About Us</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><strong>USERNAME </strong><input class="memberuserName" ></li>
+          <li><strong>PASSWORD? </strong><input class="memberpassword" type="password"></li>
+          <li><button class="submit">LOG IN</button></li>
+          <li id="notAMember"><a href="#">NOT A MEMBER?<a></li>
+        </ul>
+      </div>
+    
+  </nav>
+
+<!--   //member sign up section -->
+  <div class="container-fluid">
+    <div class="row">
+      <section class="col-xs-12 nonMember_wrapping">
+        <h3>Welcome to Larvotto residents' exclusive networking platform!</h3>
+        <p>Just a few more steps to get connected! Please fill in your details</p>  
+        
+        <div class="col-xs-4">
+          <input class="col-xs-offset-1 col-xs-7" id="firstName" type="text" placeholder="First Name..."> 
+        </div> 
+
+        <div class="col-xs-4">
+          <input class="col-xs-offset-1 col-xs-7" id="lastName" type="text" placeholder="Last Name..."> 
+        </div>
+
+        <div class="col-xs-4">
+          <input class="col-xs-offset-1 col-xs-7" id="userName" type="text" placeholder="Username..."> 
+        </div>
+
+        <div class="col-xs-4">
+          <input class="col-xs-offset-1 col-xs-7" id="email" type="text" placeholder="Email..."> 
+        </div>
+
+        <div class="col-xs-4">
+          <input class="col-xs-offset-1 col-xs-7" id="password" type="password" placeholder="Password..."> 
+        </div>
+
+        <div class="col-xs-4">
+          <button class="col-xs-offset-1 col-xs-7 signUp"><strong>Get Connected!</strong></button> 
+        </div>
+
+      </section>
+    </div>
+  </div>
+<!-- 
+  //intro para -->
+  <article class="intro">
+      <h2>What is Larvotto link...</h2>
+      <p>Larvotto link is an online platform that allows residents interact with each other in an easy and simple fashion. Link up with your neighbours, see what's going on around Larvotto. Join your neighbour for a run or invite someone to your tennis game. </p>
+      <p>All done through here with a few clicks</p>
+
+  </article>  
+
+<!--   // slider -->
+  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="5"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      
+      <div class="item active">
+        <img src="/public/assets/larvottoExterior.jpg" alt="...">
+        <div class="carousel-caption">
+          <p>Larvotto resident population is 700 strong, but how many of them do you know? </p>
+        </div>
+      </div>
+      
+      <div class="item">
+        <img src="/public/assets/awkwardElevator2.png" alt="...">
+        <div class="carousel-caption">
+          <p>NONE... <span>But we can change that</span> </p>
+        </div>
+      </div>
+      
+      <div class="item">
+        <img src="/public/assets/quickFootball.jpg" alt="...">
+        <div class="carousel-caption">
+          <p>See what's on Larvotto links. Maybe there is a football match somewhere close?</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <img src="/public/assets/triathalonPic.jpg" alt="...">
+        <div class="carousel-caption">
+          <p>Maybe join your neighbour for a quick swim, bike or run?</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <img src="/public/assets/haroldkumarelevatorgirl.jpg" alt="...">
+        <div class="carousel-caption">
+          <p>Or just maybe you meet someone special? </p>
+        </div>
+      </div>
+
+      <div class="item">
+        <img src="/public/assets/gangnamstyleelevator.gif" alt="...">
+        <div class="carousel-caption">
+          <p>just maybe...not 100% </p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+
+    
 
 </body>
 </html>

@@ -25,7 +25,7 @@ server.views({
 
 // Any other dependencies Requre MongoDB , configuration of MongDB goes into Plugins
 var plugins = [
-  // { register: require('./routes/static-pages.js')},
+  { register: require('./routes/static-pages.js')},
   { register: require('./routes/users.js')},
   { register: require('./routes/sessions.js')},
   {
