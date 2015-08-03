@@ -51,10 +51,9 @@ $(document).ready(function(){
           alert("Credentials not correct, please check again")
         } else {
           alert('Login successful!')
-
+          window.location.href = '/home';
           }
       }
-
     })
   }
 
@@ -102,6 +101,7 @@ $(document).ready(function(){
 
     $('.memberuserName').val("");
     $('.memberpassword').val("")
+
 
   })
 

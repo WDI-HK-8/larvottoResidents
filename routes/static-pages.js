@@ -10,6 +10,14 @@ exports.register = function (server, options, next) {
     ,
     {
       method: 'GET',
+      path: '/home',
+      handler: function(request, reply){
+        reply.view('home');
+      }
+    }
+    ,
+    {
+      method: 'GET',
       path: '/public/{path*}',
       handler: {
         directory: {

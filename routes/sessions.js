@@ -54,6 +54,7 @@ exports.register = function(server, options, next){
         }
 
         Auth.authenticated(request,callback)
+        
       }
     }
 

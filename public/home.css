@@ -1,0 +1,83 @@
+/*navbar*/
+
+.navbar{
+  height: 90px;
+}
+
+#navbar{
+  background: linear-gradient(to bottom, rgb(160,162,177), white);
+  border-bottom: 2px solid rgb(169,169,169);
+ 
+}
+
+.navbar-brand>img{
+  margin-top: -15px;
+}
+
+.navbar-left li, .navbar-left li a {
+  height: 80px;
+  margin-top: 10px;
+
+}
+
+.navbar-right li {
+  height: 0px;
+  margin-top: 30px;
+  margin-right: 50px;
+}
+
+/*side bar*/
+
+.sidebar{
+  margin-top: 90px;
+  background-color: rgba(211,211,211,0.6);
+  height: 800px;
+}
+
+.sidebar div{
+  margin-bottom: 15px;
+}
+
+.thumbnail-item {
+  margin-top: 15px;
+  border-bottom: 1px solid rgb(246,245,250);
+}
+
+.glyphicon{
+  font-size: 30px;
+}
+
+.thumbnail-title a {
+  font-size: 18px;
+  font-family: inherit;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.search-item {
+  font-size: 18px;
+  font-family: inherit;
+  font-weight: bold;
+  text-decoration: none;
+  vertical-align: center;
+}
+
+
+/*maincontent*/
+.main-content{
+  margin-top: 150px;
+  margin-left: 30px;
+}
+
+.thumbnail {
+  max-height: 400px;
+}
+
+.thumbnail img{
+  max-height: 155px
+}
+
+.more-info {
+  display: none;
+}
+
