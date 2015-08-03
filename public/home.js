@@ -41,23 +41,69 @@ $(document).ready(function(){
   };
 
   APIaction.prototype.nameDisplay = function(){
-  $.ajax({
-    type: 'GET',
-    url: '/users',
-    dataType: 'json',
-    success: function(response){
-      html  =  '<h4>Welcome Back!<h4>'
-      html +=  '<h4>'+response.firstname.toUpperCase()+" "+response.lastname.toUpperCase()+'</h4>'
-      $('#name_display').replaceWith(html);
-    }
-  });
-}
+    $.ajax({
+      type: 'GET',
+      url: '/users',
+      dataType: 'json',
+      success: function(response){
+        html  =  '<h4>Welcome Back!<h4>'
+        html +=  '<h4>'+response.firstname.toUpperCase()+" "+response.lastname.toUpperCase()+'</h4>'
+        $('#name_display').replaceWith(html);
+      }
+    })
+  };
+
+  //wait up, building front end
+  APIaction.prototype.creatWorkOut = function(){
+    $.ajax({
+      type: 'POST',
+      url: '/workouts',
+      data:{
+        workout:{
+          type: type,
+          startTime: startTime,
+          date: date,
+          duration: duration,
+          meetingLocation: meetingLocation,
+          comments: comments,
+        }
+      },
+      dataType: 'json',
+      success: function(response){
+        alert("Thank you for the post!")
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
 
 
   var apiAction = new APIaction ();
   
-  apiAction.nameDisplay();
+  //create workout post
+  $('#confirmPost').on('click',function(){
+    type            = $('#request-selector-type').val();
+    startTime       = $('#inputTime').val();
+    date            = new Date($('#inputDate').val());
+    duration        = $('#inputDuration').val() + $('#request-selector-hr').val();
+    meetingLocation = $('#inputMeet').val();
+    comments        = $('#inputComment').val();
 
+    if((startTime !== "") && (date !== "") && (duration !== "") && (meetingLocation !== "")) {
+    apiAction.creatWorkOut(type,startTime,date,duration,meetingLocation,comments);
+  } else {
+    alert('At least one of the input fields is empty!');
+    }
+
+
+  })
+
+
+
+
+  //name display
+  apiAction.nameDisplay();
 
   //user log out and redirect to homepage
   $('.logOut').on('click', function(){
@@ -91,7 +137,6 @@ $(document).ready(function(){
     $('#password').val("");
 
   });
-
 
   //toggle popovers
   $('.more-info').on('click', function(){
