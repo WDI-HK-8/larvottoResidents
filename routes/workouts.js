@@ -19,8 +19,9 @@ exports.register = function(server, options, next){
             var ObjectID = request.server.plugins['hapi-mongodb'].ObjectID;
 
             var workout = {
-              'message': request.payload.workout,
-              'user_id': ObjectID(session.user_id)
+              'message':request.payload.workout,
+              'username':session.username,
+              'user_id':ObjectID(session.user_id),
             }
             
             db.collection('workouts').insert(workout,function(err,writeResult){
