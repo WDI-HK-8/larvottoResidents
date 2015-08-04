@@ -131,7 +131,40 @@ $(document).ready(function(){
     $('.more-info').on('click', function(){
     console.log('popover')
     $(this).popover('toggle')
-  })  
+    })  
+
+  }
+
+  APIaction.prototype.getSelfPostSuccess = function(response){
+  var constructHTML = function(response){
+    var html = '';
+
+    for (i = 0; i < response.length; i++){
+    html +=  '<div class="col-md-4">'
+    html +=    '<div class="thumbnail img-responsive">'
+    html +=      '<img src=' + picChoice(response[i].message.type)+'>'
+    html +=        '<div class="caption">'
+    html +=          '<h3>'+response[i].message.title+'</h3>'
+    html +=          '<p>Type:  '+response[i].message.type+'</p>'
+    html +=          '<p>Date:  '+new Date(response[i].message.date).toISOString().slice(0, 10)+'</p>'
+    html +=          '<p>Time:  '+response[i].message.startTime+'</p>'
+    html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
+    html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
+    html +=          '<p>Posted by:   '+response[i].username+'</p>'
+    html +=          '<p><button class="btn btn-success amendBTN" role="button">AMEND</button>'
+    html +=          '<button class="btn btn-danger deleteBTN" role="button" data-tag='+response[i]._id+'>DELETE</button>' 
+    html +=         '</div>'
+    html +=     '</div>'
+    html +=  '</div>'
+    }
+    return html;
+   
+  };
+
+    html = constructHTML(response);
+    $('.workOutPosts').html(html);
+    
+    
 
   }
 
@@ -160,10 +193,23 @@ $(document).ready(function(){
       type: 'GET',
       url: '/users/'+username+'/workouts',
       dataType: 'json',
-      success: this.getPostSuccess,
+      success: this.getSelfPostSuccess,
       error:  function(xhr, status, data){
         console.log(xhr);
       }
+    })
+  }
+
+  APIaction.prototype.deletePost = function(){
+    $.ajax({
+      type: 'DELETE',
+      url: '/users/'+username+'/workouts/'+ workout_id,
+      success: function(response){
+        alert("Successfully deleted")
+      },
+      error: function (xhr, status, data){
+        console.log (xhr)
+      } 
     })
   }
 
@@ -194,10 +240,20 @@ $(document).ready(function(){
   })
 
   //search Post by user
-  $('#showMyPost').on('click', function(){
+  $(document).on('click', '#showMyPost, #deleteWorkOut', function(){
     username = ''
     apiAction.searchPostByUser()
+    
   })
+
+  // delete workout post
+  $(document).on('click', '.deleteBTN', function(){
+  console.log('delete post')
+  workout_id = $(this).attr('data-tag')
+  apiAction.deletePost(workout_id);
+  apiAction.getAllPost()
+  })
+  
 
   //create workout post
   $('#confirmPost').on('click',function(){

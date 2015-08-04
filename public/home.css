@@ -62,7 +62,7 @@
   vertical-align: center;
 }
 
-#createWorkOut {
+#createWorkOut, #amendWorkOut, #deleteWorkOut {
   width: 142%;
 }
 
