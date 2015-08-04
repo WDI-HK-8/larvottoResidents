@@ -54,7 +54,27 @@ exports.register = function(server, options, next){
         }
 
         Auth.authenticated(request,callback)
+
+      }
+    },
+    {
+      method: 'DELETE',
+      path: '/sessions',
+      handler: function(request, reply){
+        var db = request.server.plugins['hapi-mongodb'].db;
+        var cookie = request.session.get('larvotto_link');
+
+        if(!cookie){
+          return reply({'message': 'Already logged out.'})
+        }
+
+        var session_id = cookie.session_id;
         
+        db.collection('sessions').remove({session_id: session_id}, function(err, writeResult){
+          if(err) {return reply('Internal MongoDB error')}
+
+          reply(writeResult)
+        })
       }
     }
 
