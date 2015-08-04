@@ -69,7 +69,7 @@ exports.register = function(server, options, next){
         }
 
         var session_id = cookie.session_id;
-        
+
         db.collection('sessions').remove({session_id: session_id}, function(err, writeResult){
           if(err) {return reply('Internal MongoDB error')}
 

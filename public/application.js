@@ -23,7 +23,7 @@ $(document).ready(function(){
       success: function(response){
         if(response.userExist){
           alert("Account already exist. Forgot Passord?")
-        } else {alert("Congratulations! Account created.")
+        } else {alert("Congratulations! Account created. Please login above.")
           }
       },
       error: function(xhr, status, data){

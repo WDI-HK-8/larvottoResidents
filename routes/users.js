@@ -54,9 +54,68 @@ exports.register = function (server, options, next){
             }
           }
         }    
+      },
+      {
+        method: 'PUT',
+        path: '/users',
+        config: {
+          handler: function(request, reply){
+
+            Auth.authenticated(request, function(session){
+              if(!session.authenticated){
+                return reply (session)
+              }
+
+            var db = request.server.plugins['hapi-mongodb'].db;
+            var ObjectID = request.server.plugins['hapi-mongodb'].ObjectID;
+            var user = request.payload.user;
+            
+            var cookie  = request.session.get('larvotto_link');
+            var user_id = cookie.user_id;
 
 
+            db.collection('users').update({_id: ObjectID(user_id)}, {$set: user}, function(err, writeResult){
+              if(err) {return reply('Internal MongoDB error')}
+
+              reply (writeResult)
+            })
+            })
+          }
+          ,
+          validate:{
+            payload:{
+              user:{
+                firstname: Joi.string().min(1).max(100),
+                lastname: Joi.string().min(1).max(100),
+                email: Joi.string().email().max(100),
+                username: Joi.string().min(1).max(100),
+                password: Joi.string().min(1).max(100),
+                dateCreated: Joi.date().required()  
+              }
+            }
+          }
+        }
       }
+      ,
+      {
+        method: 'GET',
+        path: '/users',
+        handler: function(request, reply){
+          var db = request.server.plugins['hapi-mongodb'].db;
+          var ObjectID = request.server.plugins['hapi-mongodb'].ObjectID;
+          var cookie  = request.session.get('larvotto_link');
+          var user_id = cookie.user_id;
+
+          db.collection('users').findOne({_id: ObjectID(user_id)}, function(err, user){
+            if(err) {return reply('Internal MongoDB error')}
+
+            reply ({firstname: user.firstname, lastname: user.lastname})
+          })
+
+        }
+      }
+
+
 
 
     ])
