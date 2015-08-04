@@ -53,7 +53,7 @@ $(document).ready(function(){
     })
   };
 
-  //wait up, building front end
+  
   APIaction.prototype.creatWorkOut = function(){
     $.ajax({
       type: 'POST',
@@ -106,7 +106,7 @@ $(document).ready(function(){
       html +=    '<div class="thumbnail img-responsive">'
       html +=      '<img src=' + picChoice(response[i].message.type)+'>'
       html +=        '<div class="caption">'
-      html +=          '<h3>Title: '+response[i].message.title+'</h3>'
+      html +=          '<h3>'+response[i].message.title+'</h3>'
       html +=          '<p>Type: '+response[i].message.type+'</p>'
       html +=          '<p>Date:' +new Date(response[i].message.date).toISOString().slice(0, 10)+'</p>'
       html +=          '<p>Time:' +response[i].message.startTime+'</p>'
@@ -114,7 +114,8 @@ $(document).ready(function(){
       html +=          '<p>Meet Pt:' +response[i].message.meetingLocation+'</p>'
       html +=          '<p><button class="btn btn-success" role="button">Join</button>'
       html +=          '<button class="btn btn-danger" role="button">Unjoin</button>'
-      html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" data-placement="bottom" data-content='+response[i].message.comments+'>MORE</button></p>'   
+      html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
+      html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
       html +=         '</div>'
       html +=     '</div>'
       html +=  '</div>'
@@ -125,6 +126,11 @@ $(document).ready(function(){
 
     html = constructHTML(response);
     $('.workOutPosts').html(html);
+    //popover
+    $('.more-info').on('click', function(){
+    console.log('popover')
+    $(this).popover('toggle')
+  })  
 
   }
 
@@ -139,6 +145,16 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.searchPost = function (){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts?type='+type+'&date='+date+'&starttime='+starttime,
+      dataType: 'json',
+      success: this.getPostSuccess 
+    })
+  }
+
+
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
   }
@@ -152,16 +168,26 @@ $(document).ready(function(){
   apiAction.pageRefresh();
 
   //refresh all post (manually)
-    $('#refresh').on('click', function(){
-    apiAction.getAllPost()
+  $('#refresh').on('click', function(){
+  apiAction.getAllPost()
   })
+
+  //search Post
+  $('#searchBtn').on('click', function(){
+    type      = $('#request-selector-type-search').val(); 
+    date      = $('#searchByDate').val();
+    starttime = $('#searchByTime').val();
+
+    apiAction.searchPost()
+  })
+
 
   //create workout post
   $('#confirmPost').on('click',function(){
     title           = $('#inputTitle').val();
     type            = $('#request-selector-type').val();
     startTime       = $('#inputTime').val();
-    date            = new Date($('#inputDate').val());
+    date            = $('#inputDate').val();
     duration        = $('#inputDuration').val() + $('#request-selector-hr').val();
     meetingLocation = $('#inputMeet').val();
     comments        = $('#inputComment').val()||undefined;
@@ -169,13 +195,16 @@ $(document).ready(function(){
     if((startTime !== "") && (date !== "") && (duration !== "") && (meetingLocation !== "")) {
     apiAction.creatWorkOut(type,startTime,date,duration,meetingLocation,comments);
     apiAction.getAllPost();
+
   } else {
     alert('At least one of the input fields is empty!');
     }
-
   })
 
-  
+  //refresh after submit post
+  $('#modalExit').on('click', function(){
+    apiAction.getAllPost()
+  })
 
   //user log out and redirect to homepage
   $('.logOut').on('click', function(){
@@ -210,10 +239,7 @@ $(document).ready(function(){
 
   });
 
-  //toggle popovers
-  $('.more-info').on('click', function(){
-    $(this).popover('toggle')
-  })
+  
 
   
 
