@@ -70,7 +70,7 @@
 }
 
 .thumbnail {
-  max-height: 400px;
+  max-height: 500px;
 }
 
 .thumbnail img{
@@ -79,6 +79,10 @@
 
 .more-info {
   display: none;
+}
+
+.caption button{
+  margin-right: 10px;
 }
 
 /*user update section*/

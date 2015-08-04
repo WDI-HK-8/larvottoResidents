@@ -33,15 +33,29 @@ exports.register = function(server, options, next){
         validate: {
           payload: {
             workout: {
+                title: Joi.string().min(3).required(), 
                 type: Joi.string().min(3).required(),
                 startTime: Joi.string().min(3).required(),
                 date: Joi.date().min('now').required(),
                 duration: Joi.string().min(4).required(),
                 meetingLocation: Joi.string().max(30).required(),
-                comments: Joi.string().max(30).required(),
+                comments: Joi.string().max(40).optional(),
             }
           }
         }
+      }
+    },
+    {
+      method: 'GET',
+      path: '/workouts',
+      handler: function(request, reply){
+        var db = request.server.plugins['hapi-mongodb'].db;
+
+        db.collection('workouts').find().toArray(function(err, workout){
+          if(err) {return reply('Internal MongoDB error')}
+
+            reply (workout)
+        })
       }
     }
     ])

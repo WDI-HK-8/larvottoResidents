@@ -102,6 +102,9 @@
             </div>
           </li> 
 
+          <li class="col-lg-5 search-item"><button type="button" class="btn btn-primary">SEARCH</button></li>
+          <li class="col-lg-offset-1 col-lg-5 search-item"><button type="button" class="btn btn-success" id="refresh">REFRESH</button></li>
+
         </ul>
       </section>
 
@@ -138,7 +141,7 @@
 
         </div>
         
-
+        <div class="workOutPosts">
         <div class="col-md-4">
           <div class="thumbnail img-responsive">
             <img src="/public/assets/swim.jpeg" alt="...">
@@ -186,6 +189,7 @@
             </div>
           </div>
         </div>
+      </div>
       </section>
 
 
@@ -200,6 +204,13 @@
             <div class="modal-body">
               <div class="container-fluid">
                 
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">TITLE</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="inputTitle" type="text" placeholder="Title....">
+                  </div>
+                </div>
+
                 <div class="row">
                   <div class="col-md-offset-1 col-md-4">TYPE</div>
                   <div class="col-md-7 dropdown">
@@ -261,6 +272,7 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
               <button type="button" class="btn btn-primary" id="confirmPost">Save changes</button>
+              <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalCreate">Exit</button>
             </div>
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
