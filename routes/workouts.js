@@ -92,8 +92,35 @@ exports.register = function(server, options, next){
             if(err) {return reply('Internal MongoDB error')}
 
               reply(writeResult)
-
           })
+        })
+      }
+    },
+    {
+      method: 'DELETE',
+      path: '/workouts/{id}/joiners',
+      handler: function(request, reply){
+        Auth.authenticated(request, function(session){
+          if(!session.authenticated)
+            reply(session)
+
+          var db = request.server.plugins['hapi-mongodb'].db;
+          var ObjectID = request.server.plugins['hapi-mongodb'].ObjectID;
+          var workout_id  = encodeURIComponent(request.params.id);
+
+          var username = session.username;
+          var joiner_id = ObjectID(session.user_id);
+
+
+          db.collection('workouts').update({'_id': ObjectID(workout_id)},{$pull:{'joiners':username}}, function(err, writeResult){
+            if(err) {return reply('Internal MongoDB error')}
+
+              reply(writeResult)
+          })
+
+
+
+
         })
       }
     }

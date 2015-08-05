@@ -233,6 +233,18 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.unjoinWorkOut = function(){
+    $.ajax({
+      type: 'DELETE',
+      url: '/workouts/'+ workout_id +'/joiners',
+      success: function(response){
+        alert("Maybe nexttime")
+      },
+      error: function (xhr, status, data){
+        console.log (xhr)
+      } 
+    })
+  }
 
 
   APIaction.prototype.pageRefresh = function(){
@@ -283,6 +295,15 @@ $(document).ready(function(){
     workout_id = $(this).attr('data-tag')
     apiAction.joinWorkOut(workout_id);
   })
+
+  // unjoin workout
+  $(document).on('click', '#unjoinWorkOut', function(){
+    console.log('unjoin workout')
+    workout_id = $(this).attr('data-tag')
+    apiAction.unjoinWorkOut(workout_id);
+  })
+
+
 
   //create workout post
   $('#confirmPost').on('click',function(){
