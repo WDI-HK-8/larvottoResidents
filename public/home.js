@@ -56,6 +56,7 @@ $(document).ready(function(){
   
   APIaction.prototype.creatWorkOut = function(){
     $.ajax({
+      context: this,
       type: 'POST',
       url: '/workouts',
       data:{
@@ -67,11 +68,13 @@ $(document).ready(function(){
           duration: duration,
           meetingLocation: meetingLocation,
           comments: comments,
+          joiners: [],
         }
       },
       dataType: 'json',
       success: function(response){
         alert("Thank you for the post!")
+        this.getAllPost();
       },
       error: function(xhr, status, data){
         console.log(xhr);
@@ -113,8 +116,8 @@ $(document).ready(function(){
       html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
       html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
       html +=          '<p>Posted by:   '+response[i].username+'</p>'
-      html +=          '<p><button class="btn btn-success" role="button">Join</button>'
-      html +=          '<button class="btn btn-danger" role="button">Unjoin</button>'
+      html +=          '<p><button class="btn btn-success" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
+      html +=          '<button class="btn btn-danger" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Unjoin</button>'
       html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
       html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
       html +=         '</div>'
@@ -202,16 +205,35 @@ $(document).ready(function(){
 
   APIaction.prototype.deletePost = function(){
     $.ajax({
+      context: this,
       type: 'DELETE',
       url: '/users/'+username+'/workouts/'+ workout_id,
       success: function(response){
-        alert("Successfully deleted")
+        alert("Successfully deleted");
+        this.getAllPost();  
       },
       error: function (xhr, status, data){
         console.log (xhr)
       } 
     })
   }
+
+  APIaction.prototype.joinWorkOut = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts/'+ workout_id +'/joiners',
+      dataType: 'json',
+      success: function(response){
+        alert("Joined successful")
+        
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
+
+
 
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
@@ -240,7 +262,7 @@ $(document).ready(function(){
   })
 
   //search Post by user
-  $(document).on('click', '#showMyPost, #deleteWorkOut', function(){
+  $(document).on('click', '#showMyPost, #deleteWorkOut, #amendWorkOut', function(){
     username = ''
     apiAction.searchPostByUser()
     
@@ -248,12 +270,19 @@ $(document).ready(function(){
 
   // delete workout post
   $(document).on('click', '.deleteBTN', function(){
-  console.log('delete post')
-  workout_id = $(this).attr('data-tag')
-  apiAction.deletePost(workout_id);
-  apiAction.getAllPost()
+    console.log('delete post')
+    workout_id = $(this).attr('data-tag')
+    apiAction.deletePost(workout_id);
+    apiAction.getAllPost();
+  
   })
   
+  // join workout
+  $(document).on('click', '#joinWorkOut', function(){
+    console.log('join workout')
+    workout_id = $(this).attr('data-tag')
+    apiAction.joinWorkOut(workout_id);
+  })
 
   //create workout post
   $('#confirmPost').on('click',function(){
