@@ -73,7 +73,7 @@ exports.register = function(server, options, next){
     },
     {
       method: 'GET',
-      path: '/workouts/{workout_id}/joiners',
+      path: '/workouts/{id}/joiners',
       handler: function(request, reply){
         
         Auth.authenticated(request, function(session){
@@ -87,7 +87,6 @@ exports.register = function(server, options, next){
           var username = session.username;
           var joiner_id = ObjectID(session.user_id);
 
-          
 
           db.collection('workouts').update({'_id': ObjectID(workout_id)},{$push:{'joiners':username}}, function(err,writeResult){
             if(err) {return reply('Internal MongoDB error')}
