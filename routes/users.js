@@ -11,9 +11,7 @@ exports.register = function (server, options, next){
         config: {
           handler: function(request, reply){
             var db = request.server.plugins['hapi-mongodb'].db;
-            
             var user = request.payload.user;
-
             var uniqUserQuery = {
               $or: [
                 {username: user.username},
@@ -73,23 +71,39 @@ exports.register = function (server, options, next){
             var cookie  = request.session.get('larvotto_link');
             var user_id = cookie.user_id;
 
+            var uniqUserQuery = {
+              $or: [
+                {username: user.username},
+                {email: user.email}
+              ]
+            };
 
-            db.collection('users').update({_id: ObjectID(user_id)}, {$set: user}, function(err, writeResult){
-              if(err) {return reply('Internal MongoDB error')}
+            db.collection('users').count(uniqUserQuery, function(err, userExist){
+              if(userExist){
+                return reply({userExist: true});
+              }
+              Bcrypt.genSalt(10, function(err,salt){
+                Bcrypt.hash(user.password, salt, function(err, encrypted){
+                  user.password = encrypted;
 
-              reply (writeResult)
+                  db.collection('users').update({_id: ObjectID(user_id)},{$set: user}, function(err, writeResult){
+                      if(err) {return reply('Internal MongoDB error')}
+                        reply(writeResult)
+                  })
+                })
+              })
             })
-            })
-          }
+          })
+        }
           ,
           validate:{
             payload:{
               user:{
-                firstname: Joi.string().min(1).max(100),
-                lastname: Joi.string().min(1).max(100),
-                email: Joi.string().email().max(100),
-                username: Joi.string().min(1).max(100),
-                password: Joi.string().min(1).max(100),
+                firstname: Joi.string().max(100).optional(),
+                lastname: Joi.string().max(100).optional(),
+                email: Joi.string().email().max(100).optional(),
+                username: Joi.string().max(100).optional(),
+                password: Joi.string().max(100).optional(),
                 dateCreated: Joi.date().required(),  
               }
             }

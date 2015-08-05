@@ -76,7 +76,7 @@
               <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
             </div>
             <div class="thumbnail-title col-md-offset-2 col-md-7">
-              <button id="deleteWorkOut" type="button" class="btn btn-warning">
+              <button id="workOutCreated" type="button" class="btn btn-warning">
               WORKOUTS CREATED
               </button>
             </div>
@@ -218,14 +218,14 @@
               <div class="container-fluid">
                 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">TITLE</div>
+                  <div class="col-md-offset-1 col-md-4">TITLE^</div>
                   <div class="col-md-7">
                      <input class="col-md-12" id="inputTitle" type="text" placeholder="Swimming in the AM...">
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">TYPE</div>
+                  <div class="col-md-offset-1 col-md-4">TYPE^</div>
                   <div class="col-md-7 dropdown">
                     <select id="request-selector-type" class="form-control">
                     <option value="SWIM" selected="">SWIM</option>
@@ -239,21 +239,21 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">DATE</div>
+                  <div class="col-md-offset-1 col-md-4">DATE^</div>
                   <div class="col-md-7">
                      <input class="col-md-12" id="inputDate" type="date" placeholder="YYYY-MM-DD">
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">START-TIME</div>
+                  <div class="col-md-offset-1 col-md-4">START-TIME^</div>
                   <div class="col-md-7">
                      <input class="col-md-12" id="inputTime" type="text" placeholder="0900 hrs">
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">DURATION</div>
+                  <div class="col-md-offset-1 col-md-4">DURATION^</div>
                   <div class="col-md-4">
                     <input class="col-md-11" id="inputDuration" type="text" placeholder="2">
                   </div>
@@ -266,7 +266,7 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-offset-1 col-md-4">MEETING PT</div>
+                  <div class="col-md-offset-1 col-md-4">MEETING PT^</div>
                   <div class="col-md-7">
                      <input class="col-md-12" id="inputMeet" type="text" placeholder="Lobby...">
                   </div>
@@ -283,8 +283,95 @@
             </div>
 
             <div class="modal-footer">
+              <h5>^ represents mandatory fields</h5>
               <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalCreate" id="confirmPost">Save changes</button>
+              
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
+      <!-- modal for edting workout posts -->
+      <div class="modal fade" id="myModalUpdate" role="dialog" aria-labelledby="gridSystemModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="gridSystemModalLabel">Update your workout below!</h4>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid" id="constructUpdateHTML">
+                
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">TITLE^</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="editTitle" type="text" value="Swimming in the AM...">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">TYPE^</div>
+                  <div class="col-md-7 dropdown">
+                    <select id="request-selector-editType" class="form-control">
+                    <option value="SWIM" selected="">SWIM</option>
+                    <option value="BIKE"> BIKE</option>
+                    <option value="RUN"> RUN</option>  
+                    <option value="TEAM"> TEAM SPORT</option>  
+                    <option value="GROUP"> GROUP FITNESS</option>  
+                    <option value="OTHER"> OTHERS</option> 
+                    </select> 
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">DATE^</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="editDate" type="date" value="08/13/2015">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">START-TIME^</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="editTime" type="text" value="0900 hrs">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">DURATION^</div>
+                  <div class="col-md-4">
+                    <input class="col-md-11" id="editDuration" type="text" value="2">
+                  </div>
+                  <div class="col-md-3">
+                    <select id="request-selector-hr" class="form-control">
+                    <option value="hours" selected="">HOURS</option>
+                    <option value="mins">MINS</option>
+                    </select>                  
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">MEETING PT^</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="editMeet" type="text" value="Lobby">
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-offset-1 col-md-4">COMMENTS</div>
+                  <div class="col-md-7">
+                     <input class="col-md-12" id="editComment" type="text" placeholder="Max 30 characters...">
+                  </div>
+                </div>
+
+              </div>  
+            </div>
+
+            <div class="modal-footer">
+              <h5>^ represents mandatory fields</h5>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalUpdate" id="confirmUpdate">Save changes</button>
               
             </div>
           </div><!-- /.modal-content -->

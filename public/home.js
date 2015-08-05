@@ -1,7 +1,8 @@
 $(document).ready(function(){
 
   var APIaction = function(){
-
+    signInUser = this.username;
+    
   };
 
   APIaction.prototype.logOut = function(){
@@ -42,6 +43,7 @@ $(document).ready(function(){
 
   APIaction.prototype.nameDisplay = function(){
     $.ajax({
+      context: this,
       type: 'GET',
       url: '/users',
       dataType: 'json',
@@ -49,8 +51,8 @@ $(document).ready(function(){
         html  =  '<h4>Welcome Back!<h4>'
         html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
-        username = response.username;
-        this.showJoined(username)
+        this.username = response.username;
+        
 
       }
     })
@@ -138,10 +140,24 @@ $(document).ready(function(){
     console.log('popover')
     $(this).popover('toggle')
     })  
-
   }
 
-  APIaction.prototype.getSelfPostSuccess = function(response){
+
+  APIaction.prototype.getworkoutID = function(response){
+    var constructworkoutID = function(response){
+      var editHtml = '';
+
+      for (i = 0; i < response.length; i++){
+        editHtml += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalUpdate" id="editConfirmUpdate"'+'data-tag='+response[i]._id+'>' +'Confirm changes</button>'
+      }
+      return editHtml;
+    };
+    editHtml = constructworkoutID(response);
+    $('#confirmUpdate').html(html);
+  }
+
+
+  APIaction.prototype.getSelfPostSuccess = function(response){  
   var constructHTML = function(response){
     var html = '';
 
@@ -157,7 +173,7 @@ $(document).ready(function(){
     html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
     html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
     html +=          '<p>Posted by:   '+response[i].username+'</p>'
-    html +=          '<p><button class="btn btn-success amendBTN" role="button">AMEND</button>'
+    html +=          '<p><button class="btn btn-success amendBTN" role="button" data-toggle="modal" data-target="#myModalUpdate">AMEND</button>'
     html +=          '<button class="btn btn-danger deleteBTN" role="button" data-tag='+response[i]._id+'>DELETE</button>' 
     html +=         '</div>'
     html +=     '</div>'
@@ -170,9 +186,8 @@ $(document).ready(function(){
     html = constructHTML(response);
     $('.workOutPosts').html(html);
     
-    
-
   }
+
 
   APIaction.prototype.getAllPost = function(){
     $.ajax({
@@ -221,6 +236,32 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.amendWorkOut = function (){
+    $.ajax({
+      type: 'PUT',
+      url: '/users/'+username+'/workouts/'+ workout_id,
+      data:{
+        workout:{
+          title: title,
+          type: type,
+          startTime: startTime,
+          date: date,
+          duration: duration,
+          meetingLocation: meetingLocation,
+          comments: comments,
+        }
+      },
+      dataType: 'json',
+      success: function(response){
+        alert("Successfully amended!")
+        this.getAllPost();
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
+
   APIaction.prototype.joinWorkOut = function(){
     $.ajax({
       type: 'GET',
@@ -259,10 +300,11 @@ $(document).ready(function(){
     })
   }
 
-
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
   }
+
+// /////////////////////////////////////////////////////
 
   var apiAction = new APIaction ();
   
@@ -284,14 +326,37 @@ $(document).ready(function(){
     starttime = $('#searchByTime').val();
 
     apiAction.searchPost()
+
+    $('#request-selector-type-search').val(""); 
+    $('#searchByDate').val("");
+    $('#searchByTime').val("");
   })
 
   //search Post by user
-  $(document).on('click', '#deleteWorkOut, #amendWorkOut', function(){
-    username = ''
+  $(document).on('click', '#workOutCreated', function(){
+    console.log('workOutCreated')
+    username = signInUser
     apiAction.searchPostByUser()
     
   })
+
+  // amend workout post
+  $(document).on('click', '#editConfirmUpdate', function(){
+    username = signInUser;
+    workout_id = $(this).attr('data-tag');
+    title = $('#editTitle').val();
+    type = $('#request-selector-editType').val();
+    startTime = $('#editDate').val();
+    date = $('#editTime').val();
+    duration = $('#editDuration').val();
+    meetingLocation = $('#editMeet').val();
+    comments = $('#editComment').val();
+    apiAction.amendWorkOut();
+    
+
+
+  })
+
 
   // delete workout post
   $(document).on('click', '.deleteBTN', function(){
@@ -318,8 +383,8 @@ $(document).ready(function(){
 
   // show workouts that i joined
   $('#showMyPost').on('click', function(){
-    
-    apiAction.showJoined()
+    username = signInUser
+    apiAction.showJoined(username)
   })
 
 
