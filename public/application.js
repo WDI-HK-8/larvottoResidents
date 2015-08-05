@@ -100,7 +100,8 @@ $(document).ready(function(){
     apiAction.userLogin();
 
     $('.memberuserName').val("");
-    $('.memberpassword').val("")
+    $('.memberpassword').val("");
+    $('.nonMember_wrapping').slideToggle();
 
 
   })

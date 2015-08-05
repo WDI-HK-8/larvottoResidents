@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
   var APIaction = function(){
+    signInUser = this.username;
     
   };
 
@@ -42,6 +43,7 @@ $(document).ready(function(){
 
   APIaction.prototype.nameDisplay = function(){
     $.ajax({
+      context: this,
       type: 'GET',
       url: '/users',
       dataType: 'json',
@@ -49,6 +51,9 @@ $(document).ready(function(){
         html  =  '<h4>Welcome Back!<h4>'
         html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
+        this.username = response.username;
+        
+
       }
     })
   };
@@ -56,6 +61,7 @@ $(document).ready(function(){
   
   APIaction.prototype.creatWorkOut = function(){
     $.ajax({
+      context: this,
       type: 'POST',
       url: '/workouts',
       data:{
@@ -67,11 +73,13 @@ $(document).ready(function(){
           duration: duration,
           meetingLocation: meetingLocation,
           comments: comments,
+          joiners: [],
         }
       },
       dataType: 'json',
       success: function(response){
         alert("Thank you for the post!")
+        this.getAllPost();
       },
       error: function(xhr, status, data){
         console.log(xhr);
@@ -113,8 +121,8 @@ $(document).ready(function(){
       html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
       html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
       html +=          '<p>Posted by:   '+response[i].username+'</p>'
-      html +=          '<p><button class="btn btn-success" role="button">Join</button>'
-      html +=          '<button class="btn btn-danger" role="button">Unjoin</button>'
+      html +=          '<p><button class="btn btn-success" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
+      html +=          '<button class="btn btn-danger" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Leave</button>'
       html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
       html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
       html +=         '</div>'
@@ -132,10 +140,11 @@ $(document).ready(function(){
     console.log('popover')
     $(this).popover('toggle')
     })  
-
   }
 
-  APIaction.prototype.getSelfPostSuccess = function(response){
+
+
+  APIaction.prototype.getSelfPostSuccess = function(response){  
   var constructHTML = function(response){
     var html = '';
 
@@ -151,7 +160,7 @@ $(document).ready(function(){
     html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
     html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
     html +=          '<p>Posted by:   '+response[i].username+'</p>'
-    html +=          '<p><button class="btn btn-success amendBTN" role="button">AMEND</button>'
+    html +=          '<p><button class="btn btn-success amendBTN" role="button" data-toggle="modal" data-target="#myModalUpdate" data-tag='+response[i]._id+'>AMEND</button>'
     html +=          '<button class="btn btn-danger deleteBTN" role="button" data-tag='+response[i]._id+'>DELETE</button>' 
     html +=         '</div>'
     html +=     '</div>'
@@ -164,9 +173,8 @@ $(document).ready(function(){
     html = constructHTML(response);
     $('.workOutPosts').html(html);
     
-    
-
   }
+
 
   APIaction.prototype.getAllPost = function(){
     $.ajax({
@@ -202,10 +210,12 @@ $(document).ready(function(){
 
   APIaction.prototype.deletePost = function(){
     $.ajax({
+      context: this,
       type: 'DELETE',
       url: '/users/'+username+'/workouts/'+ workout_id,
       success: function(response){
-        alert("Successfully deleted")
+        alert("Successfully deleted");
+        this.getAllPost();  
       },
       error: function (xhr, status, data){
         console.log (xhr)
@@ -213,9 +223,76 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.amendWorkOut = function (){
+    $.ajax({
+      context: this,
+      type: 'PUT',
+      url: '/users/'+username+'/workouts/'+ workout_id,
+      data:{
+        workout:{
+          title: title,
+          type: type,
+          startTime: startTime,
+          date: date,
+          duration: duration,
+          meetingLocation: meetingLocation,
+          comments: comments,
+        }
+      },
+      dataType: 'json',
+      success: function(response){
+        alert("Successfully amended!")
+        this.getAllPost();
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
+
+  APIaction.prototype.joinWorkOut = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts/'+ workout_id +'/joiners',
+      dataType: 'json',
+      success: function(response){
+        alert("Joined successful")
+        
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
+
+  APIaction.prototype.unjoinWorkOut = function(){
+    $.ajax({
+      type: 'DELETE',
+      url: '/workouts/'+ workout_id +'/joiners',
+      success: function(response){
+        alert("Maybe nexttime")
+      },
+      error: function (xhr, status, data){
+        console.log (xhr)
+      } 
+    })
+  }
+
+  APIaction.prototype.showJoined = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts/'+ username,
+      dataType: 'json',
+      success: this.getPostSuccess
+      
+    })
+  }
+
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
   }
+
+// /////////////////////////////////////////////////////
 
   var apiAction = new APIaction ();
   
@@ -237,23 +314,81 @@ $(document).ready(function(){
     starttime = $('#searchByTime').val();
 
     apiAction.searchPost()
+
+    $('#request-selector-type-search').val(""); 
+    $('#searchByDate').val("");
+    $('#searchByTime').val("");
   })
 
   //search Post by user
-  $(document).on('click', '#showMyPost, #deleteWorkOut', function(){
-    username = ''
-    apiAction.searchPostByUser()
+  $(document).on('click', '#workOutCreated', function(){
+    console.log('workOutCreated')
+    username = signInUser
+    apiAction.searchPostByUser(username)
     
   })
 
+  // amend workout post
+  
+  $('#myModalUpdate').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var recipient = button.data('tag') 
+    console.log(button, recipient)
+
+      $(document).on('click','#confirmUpdate',function(){
+        title = $('#editTitle').val();
+        type = $('#request-selector-editType').val();
+        startTime = $('#editTime').val();
+        date = $('#editDate').val();
+        duration = $('#editDuration').val();
+        meetingLocation = $('#editMeet').val();
+        comments = $('#editComment').val();
+        
+        username = signInUser;
+        workout_id = recipient;
+
+        apiAction.amendWorkOut();
+      })
+
+    })
+
+
+  
+    
+
+
+  
+
+
   // delete workout post
   $(document).on('click', '.deleteBTN', function(){
-  console.log('delete post')
-  workout_id = $(this).attr('data-tag')
-  apiAction.deletePost(workout_id);
-  apiAction.getAllPost()
+    console.log('delete post')
+    workout_id = $(this).attr('data-tag')
+    apiAction.deletePost(workout_id);
+    apiAction.getAllPost();
+  
   })
   
+  // join workout
+  $(document).on('click', '#joinWorkOut', function(){
+    console.log('join workout')
+    workout_id = $(this).attr('data-tag')
+    apiAction.joinWorkOut(workout_id);
+  })
+
+  // unjoin workout
+  $(document).on('click', '#unjoinWorkOut', function(){
+    console.log('unjoin workout')
+    workout_id = $(this).attr('data-tag')
+    apiAction.unjoinWorkOut(workout_id);
+  })
+
+  // show workouts that i joined
+  $('#showMyPost').on('click', function(){
+    username = signInUser
+    apiAction.showJoined(username)
+  })
+
 
   //create workout post
   $('#confirmPost').on('click',function(){
@@ -290,8 +425,8 @@ $(document).ready(function(){
     $('.update_wrapping').animate({width: "100%"}, {duration: 'slow'}).toggle();
   })
 
+  // update user info
   $('.infoUpdate').on('click', function(){
-    
     firstName = $('#firstName').val();
     lastName  = $('#lastName').val();
     email     = $('#email').val();
@@ -312,7 +447,9 @@ $(document).ready(function(){
 
   });
 
-  
+  // show/hide post depending on whether a user has joined
+
+  // $(document).on('click','#joinWorkOut, #un')
 
   
 
