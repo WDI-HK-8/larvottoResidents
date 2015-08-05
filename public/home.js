@@ -47,7 +47,7 @@ $(document).ready(function(){
       dataType: 'json',
       success: function(response){
         html  =  '<h4>Welcome Back!<h4>'
-        html +=  '<h4>'+response.firstname.toUpperCase()+" "+response.lastname.toUpperCase()+'</h4>'
+        html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
       }
     })
@@ -107,11 +107,12 @@ $(document).ready(function(){
       html +=      '<img src=' + picChoice(response[i].message.type)+'>'
       html +=        '<div class="caption">'
       html +=          '<h3>'+response[i].message.title+'</h3>'
-      html +=          '<p>Type: '+response[i].message.type+'</p>'
-      html +=          '<p>Date:' +new Date(response[i].message.date).toISOString().slice(0, 10)+'</p>'
-      html +=          '<p>Time:' +response[i].message.startTime+'</p>'
-      html +=          '<p>Duration:' +response[i].message.duration+'</p>'
-      html +=          '<p>Meet Pt:' +response[i].message.meetingLocation+'</p>'
+      html +=          '<p>Type:  '+response[i].message.type+'</p>'
+      html +=          '<p>Date:  '+new Date(response[i].message.date).toISOString().slice(0, 10)+'</p>'
+      html +=          '<p>Time:  '+response[i].message.startTime+'</p>'
+      html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
+      html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
+      html +=          '<p>Posted by:   '+response[i].username+'</p>'
       html +=          '<p><button class="btn btn-success" role="button">Join</button>'
       html +=          '<button class="btn btn-danger" role="button">Unjoin</button>'
       html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
@@ -154,6 +155,17 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.searchPostByUser = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/users/'+username+'/workouts',
+      dataType: 'json',
+      success: this.getPostSuccess,
+      error:  function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
 
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
@@ -181,6 +193,11 @@ $(document).ready(function(){
     apiAction.searchPost()
   })
 
+  //search Post by user
+  $('#showMyPost').on('click', function(){
+    username = ''
+    apiAction.searchPostByUser()
+  })
 
   //create workout post
   $('#confirmPost').on('click',function(){
@@ -188,7 +205,7 @@ $(document).ready(function(){
     type            = $('#request-selector-type').val();
     startTime       = $('#inputTime').val();
     date            = $('#inputDate').val();
-    duration        = $('#inputDuration').val() + $('#request-selector-hr').val();
+    duration        = $('#inputDuration').val() +""+ $('#request-selector-hr').val();
     meetingLocation = $('#inputMeet').val();
     comments        = $('#inputComment').val()||undefined;
 

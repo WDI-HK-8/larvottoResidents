@@ -109,11 +109,33 @@ exports.register = function (server, options, next){
           db.collection('users').findOne({_id: ObjectID(user_id)}, function(err, user){
             if(err) {return reply('Internal MongoDB error')}
 
-            reply ({firstname: user.firstname, lastname: user.lastname})
+            reply ({firstname: user.firstname, lastname: user.lastname, user_id: user._id, username: user.username})
           })
 
         }
       }
+      ,
+      {
+        method: 'GET',
+        path: '/users/{username}/workouts',
+        handler: function(request, reply){
+          var db = request.server.plugins['hapi-mongodb'].db;
+          var cookie  = request.session.get('larvotto_link');
+          var username = cookie.username;
+
+
+          db.collection('users').findOne({'username': username}, function(err, user) {
+            if(err) {return reply('Internal MongoDB error')}
+
+              db.collection('workouts').find({'user_id': user._id}).toArray(function(err, workouts){
+                if(err) {return reply('Internal MongoDB error')}
+
+                  reply(workouts)
+              })
+          })
+        }
+      }
+
 
 
 

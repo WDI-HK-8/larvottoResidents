@@ -31,6 +31,7 @@ exports.register = function(server, options, next){
 
             var session = {
               user_id: userMongo._id,
+              username: userMongo.username,
               session_id: randomKeyGenerator()
             }
 
@@ -39,7 +40,7 @@ exports.register = function(server, options, next){
 
               request.session.set('larvotto_link', session);
 
-              reply({authorized:true})
+              reply({authorized:true, username: session.username})
             })
           })
         })

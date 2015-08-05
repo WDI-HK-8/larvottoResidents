@@ -22,7 +22,7 @@ module.exports.authenticated = function(request,callback){
       })
     }
 
-    callback({authenticated: true, user_id: session.user_id})  
+    callback({authenticated: true, user_id: session.user_id, username: session.username})  
   })
 
 }
