@@ -90,7 +90,7 @@ exports.register = function (server, options, next){
                 email: Joi.string().email().max(100),
                 username: Joi.string().min(1).max(100),
                 password: Joi.string().min(1).max(100),
-                dateCreated: Joi.date().required()  
+                dateCreated: Joi.date().required(),  
               }
             }
           }
@@ -154,12 +154,49 @@ exports.register = function (server, options, next){
 
                   db.collection('workouts').remove({'_id': ObjectID(workout_id)}, function(err, writeResult){
                     reply(writeResult)
-                  })
-                  
+                  }) 
               })
+          })
+
+        }
+      }
+      ,
+      {
+        method: 'PUT',
+        path: '/users/{username}/workouts/{id}',
+        handler: function(request, reply){
+          
+          Auth.authenticated(request, function(session){
+            if(!session.authenticated){
+              return reply (session)
+            }
+
+          var db          = request.server.plugins['hapi-mongodb'].db;
+          var ObjectID    = request.server.plugins['hapi-mongodb'].ObjectID;
+          var workout_id  = encodeURIComponent(request.params.id);
+          var cookie      = request.session.get('larvotto_link');
+          var username    = cookie.username;
+          var workout     = {
+                              'message':request.payload.workout,
+                            } 
+
+
+          db.collection('users').findOne({'username': username}, function(err, user) {
+            if(err) {return reply('Internal MongoDB error')}
+
+              db.collection('workouts').find({'user_id': user._id}).toArray(function(err, workouts){
+                if(err) {return reply('Internal MongoDB error')}
+
+                  db.collection('workouts').update({'_id': ObjectID(workout_id)},{$set:workout.message}, function(err, writeResult){
+
+                    reply(writeResult)
+                  })        
+              })
+            })
           })
         }
       },
+
 
 
 
