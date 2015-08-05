@@ -143,19 +143,6 @@ $(document).ready(function(){
   }
 
 
-  APIaction.prototype.getworkoutID = function(response){
-    var constructworkoutID = function(response){
-      var editHtml = '';
-
-      for (i = 0; i < response.length; i++){
-        editHtml += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalUpdate" id="editConfirmUpdate"'+'data-tag='+response[i]._id+'>' +'Confirm changes</button>'
-      }
-      return editHtml;
-    };
-    editHtml = constructworkoutID(response);
-    $('#confirmUpdate').html(html);
-  }
-
 
   APIaction.prototype.getSelfPostSuccess = function(response){  
   var constructHTML = function(response){
@@ -173,7 +160,7 @@ $(document).ready(function(){
     html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
     html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
     html +=          '<p>Posted by:   '+response[i].username+'</p>'
-    html +=          '<p><button class="btn btn-success amendBTN" role="button" data-toggle="modal" data-target="#myModalUpdate">AMEND</button>'
+    html +=          '<p><button class="btn btn-success amendBTN" role="button" data-toggle="modal" data-target="#myModalUpdate" data-tag='+response[i]._id+'>AMEND</button>'
     html +=          '<button class="btn btn-danger deleteBTN" role="button" data-tag='+response[i]._id+'>DELETE</button>' 
     html +=         '</div>'
     html +=     '</div>'
@@ -238,6 +225,7 @@ $(document).ready(function(){
 
   APIaction.prototype.amendWorkOut = function (){
     $.ajax({
+      context: this,
       type: 'PUT',
       url: '/users/'+username+'/workouts/'+ workout_id,
       data:{
@@ -336,26 +324,40 @@ $(document).ready(function(){
   $(document).on('click', '#workOutCreated', function(){
     console.log('workOutCreated')
     username = signInUser
-    apiAction.searchPostByUser()
+    apiAction.searchPostByUser(username)
     
   })
 
   // amend workout post
-  $(document).on('click', '#editConfirmUpdate', function(){
-    username = signInUser;
-    workout_id = $(this).attr('data-tag');
-    title = $('#editTitle').val();
-    type = $('#request-selector-editType').val();
-    startTime = $('#editDate').val();
-    date = $('#editTime').val();
-    duration = $('#editDuration').val();
-    meetingLocation = $('#editMeet').val();
-    comments = $('#editComment').val();
-    apiAction.amendWorkOut();
+  
+  $('#myModalUpdate').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) 
+    var recipient = button.data('tag') 
+    console.log(button, recipient)
+
+      $(document).on('click','#confirmUpdate',function(){
+        title = $('#editTitle').val();
+        type = $('#request-selector-editType').val();
+        startTime = $('#editTime').val();
+        date = $('#editDate').val();
+        duration = $('#editDuration').val();
+        meetingLocation = $('#editMeet').val();
+        comments = $('#editComment').val();
+        
+        username = signInUser;
+        workout_id = recipient;
+
+        apiAction.amendWorkOut();
+      })
+
+    })
+
+
+  
     
 
 
-  })
+  
 
 
   // delete workout post
@@ -423,8 +425,8 @@ $(document).ready(function(){
     $('.update_wrapping').animate({width: "100%"}, {duration: 'slow'}).toggle();
   })
 
+  // update user info
   $('.infoUpdate').on('click', function(){
-    
     firstName = $('#firstName').val();
     lastName  = $('#lastName').val();
     email     = $('#email').val();
@@ -445,7 +447,9 @@ $(document).ready(function(){
 
   });
 
-  
+  // show/hide post depending on whether a user has joined
+
+  // $(document).on('click','#joinWorkOut, #un')
 
   
 

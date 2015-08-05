@@ -201,7 +201,7 @@ exports.register = function (server, options, next){
               db.collection('workouts').find({'user_id': user._id}).toArray(function(err, workouts){
                 if(err) {return reply('Internal MongoDB error')}
 
-                  db.collection('workouts').update({'_id': ObjectID(workout_id)},{$set:workout.message}, function(err, writeResult){
+                  db.collection('workouts').update({'_id': ObjectID(workout_id)},{$set:workout}, function(err, writeResult){
 
                     reply(writeResult)
                   })        
