@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
   var APIaction = function(){
-    
+
   };
 
   APIaction.prototype.logOut = function(){
@@ -49,6 +49,9 @@ $(document).ready(function(){
         html  =  '<h4>Welcome Back!<h4>'
         html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
+        username = response.username;
+        this.showJoined(username)
+
       }
     })
   };
@@ -117,7 +120,7 @@ $(document).ready(function(){
       html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
       html +=          '<p>Posted by:   '+response[i].username+'</p>'
       html +=          '<p><button class="btn btn-success" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
-      html +=          '<button class="btn btn-danger" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Unjoin</button>'
+      html +=          '<button class="btn btn-danger" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Leave</button>'
       html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
       html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
       html +=         '</div>'
@@ -246,6 +249,16 @@ $(document).ready(function(){
     })
   }
 
+  APIaction.prototype.showJoined = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts/'+ username,
+      dataType: 'json',
+      success: this.getPostSuccess
+      
+    })
+  }
+
 
   APIaction.prototype.pageRefresh = function(){
     return setInterval(this.getAllPost(),5000)
@@ -274,7 +287,7 @@ $(document).ready(function(){
   })
 
   //search Post by user
-  $(document).on('click', '#showMyPost, #deleteWorkOut, #amendWorkOut', function(){
+  $(document).on('click', '#deleteWorkOut, #amendWorkOut', function(){
     username = ''
     apiAction.searchPostByUser()
     
@@ -303,6 +316,11 @@ $(document).ready(function(){
     apiAction.unjoinWorkOut(workout_id);
   })
 
+  // show workouts that i joined
+  $('#showMyPost').on('click', function(){
+    
+    apiAction.showJoined()
+  })
 
 
   //create workout post

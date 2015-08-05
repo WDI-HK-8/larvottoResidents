@@ -159,7 +159,8 @@ exports.register = function (server, options, next){
           })
 
         }
-      },
+      }
+      ,
       {
         method: 'PUT',
         path: '/users/{username}/workouts/{id}',
@@ -195,6 +196,7 @@ exports.register = function (server, options, next){
           })
         }
       },
+
 
 
 

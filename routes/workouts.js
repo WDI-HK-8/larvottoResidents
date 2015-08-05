@@ -117,14 +117,32 @@ exports.register = function(server, options, next){
 
               reply(writeResult)
           })
-
-
-
-
         })
       }
     }
+    ,
+    {
+      method: 'GET',
+      path: '/workouts/{username}',
+      handler: function(request, reply){
+        
+        Auth.authenticated(request, function(session){
+          if(!session.authenticated)
+            reply(session)
 
+          var db = request.server.plugins['hapi-mongodb'].db;
+          var cookie  = request.session.get('larvotto_link');
+          var username = cookie.username;
+
+          db.collection('workouts').find({'joiners':username}).toArray(function(err, workouts){
+            if(err) {return reply('Internal MongoDB error')}
+
+              reply(workouts)
+          })
+          
+        })
+      }
+    }
 
     ])
   next();
