@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
   var APIaction = function(){
-
+    
   };
 
   APIaction.prototype.logOut = function(){
@@ -41,23 +41,141 @@ $(document).ready(function(){
   };
 
   APIaction.prototype.nameDisplay = function(){
-  $.ajax({
-    type: 'GET',
-    url: '/users',
-    dataType: 'json',
-    success: function(response){
-      html  =  '<h4>Welcome Back!<h4>'
-      html +=  '<h4>'+response.firstname.toUpperCase()+" "+response.lastname.toUpperCase()+'</h4>'
-      $('#name_display').replaceWith(html);
-    }
-  });
-}
+    $.ajax({
+      type: 'GET',
+      url: '/users',
+      dataType: 'json',
+      success: function(response){
+        html  =  '<h4>Welcome Back!<h4>'
+        html +=  '<h4>'+response.firstname.toUpperCase()+" "+response.lastname.toUpperCase()+'</h4>'
+        $('#name_display').replaceWith(html);
+      }
+    })
+  };
 
+  //wait up, building front end
+  APIaction.prototype.creatWorkOut = function(){
+    $.ajax({
+      type: 'POST',
+      url: '/workouts',
+      data:{
+        workout:{
+          title: title,
+          type: type,
+          startTime: startTime,
+          date: date,
+          duration: duration,
+          meetingLocation: meetingLocation,
+          comments: comments,
+        }
+      },
+      dataType: 'json',
+      success: function(response){
+        alert("Thank you for the post!")
+      },
+      error: function(xhr, status, data){
+        console.log(xhr);
+      }
+    })
+  }
+
+  var picChoice = function(type){
+    if(type == 'SWIM'){
+      return '/public/assets/swim.jpeg'
+    } else if (type == 'BIKE'){
+      return '/public/assets/bike.jpg'
+    } else if (type == 'RUN'){
+      return '/public/assets/run.jpeg'
+    } else if (type == 'TEAM'){
+      return '/public/assets/team.jpeg'
+    } else if (type == 'GROUP'){
+      return '/public/assets/bootcamp.jpeg'
+    } else if (type == 'OTHER') {
+      return '/public/assets/others.jpg'
+    }
+    
+  }
+
+
+  APIaction.prototype.getPostSuccess = function(response){
+    var constructHTML = function(response){
+      var html = '';
+
+      for (i = 0; i < response.length; i++){
+      html +=  '<div class="col-md-4">'
+      html +=    '<div class="thumbnail img-responsive">'
+      html +=      '<img src=' + picChoice(response[i].message.type)+'>'
+      html +=        '<div class="caption">'
+      html +=          '<h3>Title: '+response[i].message.title+'</h3>'
+      html +=          '<p>Type: '+response[i].message.type+'</p>'
+      html +=          '<p>Date:' +new Date(response[i].message.date).toISOString().slice(0, 10)+'</p>'
+      html +=          '<p>Time:' +response[i].message.startTime+'</p>'
+      html +=          '<p>Duration:' +response[i].message.duration+'</p>'
+      html +=          '<p>Meet Pt:' +response[i].message.meetingLocation+'</p>'
+      html +=          '<p><button class="btn btn-success" role="button">Join</button>'
+      html +=          '<button class="btn btn-danger" role="button">Unjoin</button>'
+      html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" data-placement="bottom" data-content='+response[i].message.comments+'>MORE</button></p>'   
+      html +=         '</div>'
+      html +=     '</div>'
+      html +=  '</div>'
+      }
+      return html;
+     
+    };
+
+    html = constructHTML(response);
+    $('.workOutPosts').html(html);
+
+  }
+
+  APIaction.prototype.getAllPost = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/workouts',
+      dataType: 'json',
+      success: this.getPostSuccess
+      
+
+    })
+  }
+
+  APIaction.prototype.pageRefresh = function(){
+    return setInterval(this.getAllPost(),5000)
+  }
 
   var apiAction = new APIaction ();
   
+  //name display
   apiAction.nameDisplay();
+  
+  //autoRefresh
+  apiAction.pageRefresh();
 
+  //refresh all post (manually)
+    $('#refresh').on('click', function(){
+    apiAction.getAllPost()
+  })
+
+  //create workout post
+  $('#confirmPost').on('click',function(){
+    title           = $('#inputTitle').val();
+    type            = $('#request-selector-type').val();
+    startTime       = $('#inputTime').val();
+    date            = new Date($('#inputDate').val());
+    duration        = $('#inputDuration').val() + $('#request-selector-hr').val();
+    meetingLocation = $('#inputMeet').val();
+    comments        = $('#inputComment').val()||undefined;
+
+    if((startTime !== "") && (date !== "") && (duration !== "") && (meetingLocation !== "")) {
+    apiAction.creatWorkOut(type,startTime,date,duration,meetingLocation,comments);
+    apiAction.getAllPost();
+  } else {
+    alert('At least one of the input fields is empty!');
+    }
+
+  })
+
+  
 
   //user log out and redirect to homepage
   $('.logOut').on('click', function(){
@@ -91,7 +209,6 @@ $(document).ready(function(){
     $('#password').val("");
 
   });
-
 
   //toggle popovers
   $('.more-info').on('click', function(){
