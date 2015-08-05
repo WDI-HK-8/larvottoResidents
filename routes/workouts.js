@@ -49,15 +49,27 @@ exports.register = function(server, options, next){
       method: 'GET',
       path: '/workouts',
       handler: function(request, reply){
-        var db = request.server.plugins['hapi-mongodb'].db;
+        var db        = request.server.plugins['hapi-mongodb'].db;
+        var type      = request.query.type;
+        var date      = new Date(request.query.date);
+        var starttime = request.query.starttime;
 
-        db.collection('workouts').find().toArray(function(err, workout){
-          if(err) {return reply('Internal MongoDB error')}
+        if (type !=  null || request.query.date !=  null || starttime !=  null){
+          db.collection('workouts').find({$or: [{'message.type': type},{'message.date': date},{'message.startTime': starttime}]}).toArray(function(err, workout){
+            if(err) {return reply('Internal MongoDB error')}
 
-            reply (workout)
-        })
+              reply(workout)
+          })          
+        } else {
+          db.collection('workouts').find().toArray(function(err, workout){
+            if(err) {return reply('Internal MongoDB error')}
+
+              reply(workout);
+          });
+        }
       }
-    }
+    },
+
     ])
   next();
 }
