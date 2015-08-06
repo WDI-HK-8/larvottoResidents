@@ -41,7 +41,7 @@ exports.register = function(server, options, next){
                 duration: Joi.string().min(4).required(),
                 meetingLocation: Joi.string().max(30).required(),
                 comments: Joi.string().max(40).optional(),
-                joiners: Joi.array(),
+                joiners: Joi.array().optional(),
             }
           }
         }
@@ -80,34 +80,34 @@ exports.register = function(server, options, next){
           if(!session.authenticated)
             reply(session)
 
-          var db = request.server.plugins['hapi-mongodb'].db;
-          var ObjectID = request.server.plugins['hapi-mongodb'].ObjectID;
-          var workout_id  = encodeURIComponent(request.params.id);
+            var db          = request.server.plugins['hapi-mongodb'].db;
+            var ObjectID    = request.server.plugins['hapi-mongodb'].ObjectID;
+            var workout_id  = encodeURIComponent(request.params.id);
 
-          var username = session.username;
-          var joiner_id = ObjectID(session.user_id);
+            var username = session.username;
+            var joiner_id = ObjectID(session.user_id);
 
-          var joinRecord = {
-              $and: [
-                {'_id': ObjectID(workout_id)},
-                {'joiners': username}
-              ]
-          };
+            var joinRecord = {
+                $and: [
+                  {'_id': ObjectID(workout_id)},
+                  {'joiners': username}
+                ]
+            };
 
-          db.collection('workouts').count(joinRecord, function(err, joinerExist){
+            db.collection('workouts').count(joinRecord, function(err, joinerExist){
 
-            if (joinerExist){
-              return reply ([{joinerExist: true},{'_id':workout_id}])
-            }
+              if (joinerExist){
+                return reply ({joinerExist: true})
+              }
 
 
-            db.collection('workouts').update({'_id': ObjectID(workout_id)},{$push:{'joiners':username}}, function(err,writeResult){
-              if(err) {return reply('Internal MongoDB error')}
+              db.collection('workouts').update({'_id': ObjectID(workout_id)},{$push:{'joiners':username}}, function(err,writeResult){
+                if(err) {return reply('Internal MongoDB error')}
 
-                reply(writeResult)
+                  reply(writeResult)
+              })
+              
             })
-            
-          })
 
         })
       }

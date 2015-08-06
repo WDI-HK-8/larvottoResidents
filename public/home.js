@@ -1,8 +1,7 @@
 $(document).ready(function(){
-
+  var signInUser;
   var APIaction = function(){
-    signInUser = this.username;
-    
+
   };
 
   APIaction.prototype.logOut = function(){
@@ -51,7 +50,7 @@ $(document).ready(function(){
         html  =  '<h4>Welcome Back!<h4>'
         html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
-        this.username = response.username;
+        signInUser=response.username;
         
 
       }
@@ -121,8 +120,29 @@ $(document).ready(function(){
       html +=          '<p>Duration:  '+response[i].message.duration+'</p>'
       html +=          '<p>Meet Point:  '+response[i].message.meetingLocation+'</p>'
       html +=          '<p>Posted by:   '+response[i].username+'</p>'
-      html +=          '<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
-      html +=          '<button class="btn btn-danger unjoin-btn" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Leave</button>'
+
+      console.log(response[i]);
+      
+      if (response[i].username == signInUser){
+        html += '<p><button class="btn btn-primary" role="button">Self Post</button>'
+
+      } else if (response[i].joiners === undefined || response[i].joiners.length === 0){
+        html += '<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
+
+      } else {
+        
+          if (response[i].joiners.indexOf(signInUser) == -1){
+            console.log("!= " + signInUser);
+            html +='<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
+
+          } else {
+            console.log("==" + signInUser);
+            html += '<button class="btn btn-danger unjoin-btn" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Leave</button>'
+          }
+        
+       
+      }
+
       html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
       html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
       html +=         '</div>'
@@ -178,14 +198,10 @@ $(document).ready(function(){
     $.ajax({
       type: 'GET',
       url: '/workouts',
-      dataType: 'json',
       success: this.getPostSuccess
     })
   }
 
-  APIaction.prototype.checkUserIsJoiner = function(){
-    if (this.joinWorkOut(response))
-  }
 
   APIaction.prototype.searchPost = function (){
     $.ajax({
@@ -252,15 +268,17 @@ $(document).ready(function(){
 
   APIaction.prototype.joinWorkOut = function(){
     $.ajax({
+      context: this,
       type: 'GET',
       url: '/workouts/'+ workout_id +'/joiners',
       dataType: 'json',
       success: function(response){
-        if (response[0].joinerExist){
+        if (response.joinerExist){
         alert("Cannot join twice");
         } else {
         alert("Joined successful") ;         
         }
+        this.getAllPost();
       },
       error: function(xhr, status, data){
         console.log(xhr);
@@ -270,15 +288,18 @@ $(document).ready(function(){
 
   APIaction.prototype.unjoinWorkOut = function(){
     $.ajax({
+      context: this,
       type: 'DELETE',
       url: '/workouts/'+ workout_id +'/joiners',
       success: function(response){
         alert("Maybe nexttime")
+        this.getAllPost();
       },
       error: function (xhr, status, data){
         console.log (xhr)
       } 
     })
+    
   }
 
   APIaction.prototype.showJoined = function(){
@@ -378,6 +399,7 @@ $(document).ready(function(){
     workout_id = $(this).attr('data-tag')
     apiAction.joinWorkOut(workout_id);
     
+    
   })
 
   // unjoin workout
@@ -385,6 +407,7 @@ $(document).ready(function(){
     console.log('unjoin workout')
     workout_id = $(this).attr('data-tag')
     apiAction.unjoinWorkOut(workout_id);
+
     
   })
 
