@@ -62,9 +62,10 @@
   vertical-align: center;
 }
 
-#createWorkOut, #workOutCreated {
-  width: 142%;
+#createWorkOut, #workOutCreated, #showMyPost {
+  width: 130%;
 }
+
 
 #searchBtn, #refresh{
   margin-top: 30px;
@@ -85,9 +86,6 @@
   max-height: 155px
 }
 
-.more-info {
-  display: none;
-}
 
 .caption button{
   margin-right: 10px;
