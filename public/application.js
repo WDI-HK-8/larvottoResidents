@@ -101,7 +101,6 @@ $(document).ready(function(){
 
     $('.memberuserName').val("");
     $('.memberpassword').val("");
-    $('.nonMember_wrapping').slideToggle();
 
 
   })

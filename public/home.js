@@ -9,7 +9,7 @@ $(document).ready(function(){
       type: 'DELETE',
       url: '/sessions',
       success: function(response){
-        alert("Logout successful. See you soon!")
+        // alert("Logout successful. See you soon!")
         window.location.href = '/';
       }
     })
@@ -31,7 +31,7 @@ $(document).ready(function(){
       },
       dataType: 'json',
       success: function(response){
-        alert("Update successful!")
+        // alert("Update successful!")
         window.location.href = '/home';
       },
       error: function(xhr, status, data){
@@ -51,8 +51,6 @@ $(document).ready(function(){
         html +=  '<h4>'+response.username.toUpperCase()+'</h4>'
         $('#name_display').replaceWith(html);
         signInUser=response.username;
-        
-
       }
     })
   };
@@ -77,7 +75,7 @@ $(document).ready(function(){
       },
       dataType: 'json',
       success: function(response){
-        alert("Thank you for the post!")
+        // alert("Thank you for the post!")
         this.getAllPost();
       },
       error: function(xhr, status, data){
@@ -124,7 +122,7 @@ $(document).ready(function(){
       console.log(response[i]);
       
       if (response[i].username == signInUser){
-        html += '<p><button class="btn btn-primary" role="button">Self Post</button>'
+        html += '<p><button class="btn btn-primary" role="button">SELF POST</button>'
 
       } else if (response[i].joiners === undefined || response[i].joiners.length === 0){
         html += '<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
@@ -133,18 +131,18 @@ $(document).ready(function(){
         
           if (response[i].joiners.indexOf(signInUser) == -1){
             console.log("!= " + signInUser);
-            html +='<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>Join</button>'
+            html +='<p><button class="btn btn-success join-btn" id="joinWorkOut" role="button" data-tag='+response[i]._id+'>JOIN</button>'
 
           } else {
             console.log("==" + signInUser);
-            html += '<button class="btn btn-danger unjoin-btn" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>Leave</button>'
+            html += '<button class="btn btn-danger unjoin-btn" id="unjoinWorkOut" role="button" data-tag='+response[i]._id+'>LEAVE</button>'
           }
         
        
       }
-
-      html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" ' 
-      html +=          'data-placement="bottom" data-content=' + response[i].message.comments + '>MORE</button></p>'   
+      var commentsPopover = response[i].message.comments;
+      console.log(commentsPopover)
+      html +=          '<button type="button" class="btn btn-primary more-info" data-container="body" data-toggle="popover" data-placement="bottom" title ="Comments" data-content="' +commentsPopover+ '">'+' MORE </button></p>'   
       html +=         '</div>'
       html +=     '</div>'
       html +=  '</div>'
@@ -186,7 +184,6 @@ $(document).ready(function(){
     html +=  '</div>'
     }
     return html;
-   
   };
 
     html = constructHTML(response);
@@ -230,7 +227,7 @@ $(document).ready(function(){
       type: 'DELETE',
       url: '/users/'+username+'/workouts/'+ workout_id,
       success: function(response){
-        alert("Successfully deleted");
+        // alert("Successfully deleted");
         this.getAllPost();  
       },
       error: function (xhr, status, data){
@@ -257,7 +254,7 @@ $(document).ready(function(){
       },
       dataType: 'json',
       success: function(response){
-        alert("Successfully amended!")
+        // alert("Successfully amended!")
         this.getAllPost();
       },
       error: function(xhr, status, data){
@@ -274,9 +271,9 @@ $(document).ready(function(){
       dataType: 'json',
       success: function(response){
         if (response.joinerExist){
-        alert("Cannot join twice");
+        // alert("Cannot join twice");
         } else {
-        alert("Joined successful") ;         
+        // alert("Joined successful") ;         
         }
         this.getAllPost();
       },
@@ -292,7 +289,7 @@ $(document).ready(function(){
       type: 'DELETE',
       url: '/workouts/'+ workout_id +'/joiners',
       success: function(response){
-        alert("Maybe nexttime")
+        // alert("Maybe nexttime")
         this.getAllPost();
       },
       error: function (xhr, status, data){
