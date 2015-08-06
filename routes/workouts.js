@@ -87,12 +87,28 @@ exports.register = function(server, options, next){
           var username = session.username;
           var joiner_id = ObjectID(session.user_id);
 
+          var joinRecord = {
+              $and: [
+                {'_id': ObjectID(workout_id)},
+                {'joiners': username}
+              ]
+          };
 
-          db.collection('workouts').update({'_id': ObjectID(workout_id)},{$push:{'joiners':username}}, function(err,writeResult){
-            if(err) {return reply('Internal MongoDB error')}
+          db.collection('workouts').count(joinRecord, function(err, joinerExist){
 
-              reply(writeResult)
+            if (joinerExist){
+              return reply ([{joinerExist: true},{'_id':workout_id}])
+            }
+
+
+            db.collection('workouts').update({'_id': ObjectID(workout_id)},{$push:{'joiners':username}}, function(err,writeResult){
+              if(err) {return reply('Internal MongoDB error')}
+
+                reply(writeResult)
+            })
+            
           })
+
         })
       }
     },
